@@ -33,15 +33,14 @@ class TabBarViewController: UITabBarController {
             selectedImage: UIImage(named: "awardSelect")
         )
         
-        let LogInPageVC = UIViewController()
-        LogInPageVC.view.backgroundColor = .cyan
-        LogInPageVC.tabBarItem = UITabBarItem(
+        let ProfilePageVC = ProfilePageViewController()
+        ProfilePageVC.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "user"),
             selectedImage: UIImage(named: "userSelect")
         )
         
-        self.viewControllers = [HomePageVC, LeaderBoardPageVC, LogInPageVC]
+        self.viewControllers = [HomePageVC, LeaderBoardPageVC, ProfilePageVC]
         if let items = tabBar.items {
             for (index, item) in items.enumerated() {
                 if index == 4 {

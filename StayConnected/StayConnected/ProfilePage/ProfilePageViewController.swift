@@ -13,12 +13,14 @@ class ProfilePageViewController: UIViewController {
     private var mail = UILabel()
     private var profileImage = UIImageView()
     private var cameraIcone = UIImageView()
+    private var stack = UIStackView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         mainLabelSetup()
         profileSetup()
+        stackSetup()
     }
     
     private func mainLabelSetup() {
@@ -63,6 +65,118 @@ class ProfilePageViewController: UIViewController {
             cameraIcone.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor)
         ])
     }
+    
+    private func stackSetup() {
+        view.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        let infoLabel = UILabel()
+        stack.addSubview(infoLabel)
+        infoLabel.text = "Infromation"
+        infoLabel.textColor = .defaultgrey
+        infoLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let lineOne = createLine(text: "Score",point: "25")
+        let lineTwo = createLine(text: "Answered Questions",point: "15")
+        
+        let lineThree = UIStackView()
+        lineThree.translatesAutoresizingMaskIntoConstraints = false
+        lineThree.axis = .horizontal
+        
+        let lefIcone = UIImageView()
+        lefIcone.image = UIImage(named: "left")
+        lineThree.addArrangedSubview(lefIcone)
+        
+        let logOutLabel = UILabel()
+        logOutLabel.text = "  Log out"
+        logOutLabel.textColor = .defaultgrey
+        logOutLabel.font = UIFont.systemFont(ofSize: 17)
+        lineThree.addArrangedSubview(logOutLabel)
+        
+        let lineFour = UIStackView()
+        stack.addSubview(lineFour)
+        lineFour.translatesAutoresizingMaskIntoConstraints = false
+        lineFour.axis = .horizontal
+        lineFour.addArrangedSubview(lineThree)
+        addBottomBorderToStack(stack: lineFour, padding: 25)
+        
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: mail.bottomAnchor, constant: 59),
+            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
+            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            lineOne.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 29),
+            lineTwo.topAnchor.constraint(equalTo: lineOne.bottomAnchor, constant: 29),
+            lineFour.topAnchor.constraint(equalTo: lineTwo.bottomAnchor, constant: 29),
+            lineFour.widthAnchor.constraint(equalTo: stack.widthAnchor),
+        ])
+        
+        addTapGesture(to: lineOne, action: #selector(stack1Tapped))
+        addTapGesture(to: lineTwo, action: #selector(stack2Tapped))
+        addTapGesture(to: lineFour, action: #selector(stack3Tapped))
+    }
+    
+    private func createLine(text: String, point: String) -> UIStackView {
+        let smallStack = UIStackView()
+        stack.addSubview(smallStack)
+        smallStack.translatesAutoresizingMaskIntoConstraints = false
+        smallStack.axis = .horizontal
+        smallStack.distribution = .equalCentering
+        
+        addBottomBorderToStack(stack: smallStack, padding: 12)
+        
+        let leadLabel = UILabel()
+        smallStack.addArrangedSubview(leadLabel)
+        leadLabel.text = text
+        leadLabel.textColor = .gray
+        leadLabel.font = UIFont.systemFont(ofSize: 17)
+        leadLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let pointLabel = UILabel()
+        smallStack.addArrangedSubview(pointLabel)
+        pointLabel.text = point
+        pointLabel.textColor = .gray
+        pointLabel.font = UIFont.systemFont(ofSize: 17)
+        pointLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            smallStack.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
+            smallStack.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
+            smallStack.heightAnchor.constraint(equalToConstant: 56)
+        ])
+        
+        return smallStack
+    }
+    
+    private func addBottomBorderToStack(stack: UIStackView, padding: Int) {
+        let bottomBorder = UIView()
+        bottomBorder.backgroundColor = .defaultgrey
+        stack.addSubview(bottomBorder)
+        bottomBorder.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            bottomBorder.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
+            bottomBorder.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
+            bottomBorder.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: CGFloat(padding)),
+            bottomBorder.heightAnchor.constraint(equalToConstant: 1)
+        ])
+    }
+    
+    private func addTapGesture(to stack: UIStackView, action: Selector) {
+            let tapGesture = UITapGestureRecognizer(target: self, action: action)
+            stack.addGestureRecognizer(tapGesture)
+        }
+    
+    @objc private func stack1Tapped() {
+            print("Score")
+        }
+    
+    @objc private func stack2Tapped() {
+            print("questions")
+        }
+    
+    @objc private func stack3Tapped() {
+            print("log out")
+        }
 }
 
 #Preview {

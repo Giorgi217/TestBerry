@@ -7,8 +7,9 @@
 
 import UIKit
 
-class SignUpView: UIViewController {
+class SignUpView: UIViewController, UITextFieldDelegate {
     var parameters: SignUpModel = SignUpModel(userName: "", email: "", password: "")
+    let viewModel = SignUpViewModel()
     
     let signUpLabel: UILabel = {
         let label = UILabel()
@@ -169,7 +170,7 @@ class SignUpView: UIViewController {
         passwordHideButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         confirmPasswordHideButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         logInButton.addTarget(self, action: #selector(logInButtonTapped), for: .touchUpInside)
-        
+        emailTextField.delegate = self
     }
     
     func setupUI() {
@@ -316,13 +317,38 @@ class SignUpView: UIViewController {
     }
     
     @objc func logInButtonTapped() {
-        parameters = SignUpModel(
-            userName: nameTextField.text ?? "",
-            email: emailTextField.text ?? "",
-            password: passwordTextField.text ?? "")
-        print(parameters)
-
+        guard let username = nameTextField.text,
+              let email = emailTextField.text,
+              let password = passwordTextField.text,
+              let confirmPassword = confirmPasswordTextField.text, !confirmPassword.isEmpty else {
+            showAlert(message: "All fields are required.")
+            return
+        }
+        viewModel.register(username: username, email: email, password: password, confirmPassword: confirmPassword) {[weak self] success, errorMessage in
+            DispatchQueue.main.async {
+                if success {
+                    self?.showAlert(message: "Sign-up successful!")
+                } else if let errorMessage = errorMessage {
+                    self?.showAlert(message: errorMessage)
+                }
+            }
+        }
     }
-    
-    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == emailTextField {
+            let lowcasedString = string.lowercased()
+            if string != lowcasedString {
+                textField.text = (textField.text as NSString?)?.replacingCharacters(in: range, with: lowcasedString)
+                return false
+            }
+        }
+        return true
+    }
+    func showAlert(message: String) {
+        let alertController = UIAlertController(title: "Sign Up", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
+    }
 }
+
+

@@ -7,7 +7,9 @@
 
 import UIKit
 
-class LoginView: UIViewController {
+class LoginView: UIViewController, UITextFieldDelegate {
+    
+    let viewmodel = LogInViewModel()
     
     let logInLabel: UILabel = {
         let label = UILabel()
@@ -126,6 +128,8 @@ class LoginView: UIViewController {
         setupUI()
         passwordHideButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         logInButton.addTarget(self, action: #selector(logIntapped), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(signUptapped), for: .touchUpInside)
+        userNameTextField.delegate = self
     }
     
     func setupUI() {
@@ -235,9 +239,40 @@ class LoginView: UIViewController {
     }
     
     @objc func logIntapped() {
+        viewmodel.logIn(email: userNameTextField.text!, password: passwordTextField.text!) {[weak self] success, errorMessage in
+            DispatchQueue.main.async {
+                if success {
+                    let addQuestion = AddQuestion()
+                    self?.navigationController?.present(addQuestion, animated: true)
+                } else {
+                    self?.showAlert(message: errorMessage)
+                }
+                let addQuestion = AddQuestion()
+                self?.navigationController?.present(addQuestion, animated: true)
+            }
+        }
+    }
+    
+    @objc func signUptapped() {
         let signUpView = SignUpView()
         navigationController?.pushViewController(signUpView, animated: true)
     }
     
-
+  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == userNameTextField {
+            let lowercasedString = string.lowercased()
+            if string != lowercasedString {
+                textField.text = (textField.text as NSString?)?.replacingCharacters(in: range, with: lowercasedString)
+                return false
+            }
+        }
+        return true
+    }
+  
+    func showAlert(message: String) {
+        let alertController = UIAlertController(title: "Log In", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
+    }
 }
+

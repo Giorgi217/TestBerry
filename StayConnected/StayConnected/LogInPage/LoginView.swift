@@ -242,13 +242,11 @@ class LoginView: UIViewController, UITextFieldDelegate {
         viewmodel.logIn(email: userNameTextField.text!, password: passwordTextField.text!) {[weak self] success, errorMessage in
             DispatchQueue.main.async {
                 if success {
-                    let addQuestion = AddQuestion()
-                    self?.navigationController?.present(addQuestion, animated: true)
+                    let tabBar = TabBarViewController()
+                    self?.navigationController?.pushViewController(tabBar, animated: true)
                 } else {
                     self?.showAlert(message: errorMessage)
                 }
-                let addQuestion = AddQuestion()
-                self?.navigationController?.present(addQuestion, animated: true)
             }
         }
     }

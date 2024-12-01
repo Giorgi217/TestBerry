@@ -12,8 +12,10 @@ class HomePageViewController: UIViewController {
     private var twoOptionStack = UIStackView()
     private var mainLabel = UILabel()
     private var addIcone = UIImageView()
+    let generalBtn = UIButton()
+    let personalBtn = UIButton()
     private var tagsArr = ["Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi"]
-    private var questionArr = ["replies: 5", "replies: 3", "replies: 2","replies: 1", "replies: 9", "replies: 3","replies: 2", "replies: 7", "replies: 0"]
+    private var questionArr = [QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
     
     let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -91,8 +93,6 @@ class HomePageViewController: UIViewController {
         twoOptionStack.distribution = .fillEqually
         twoOptionStack.spacing = 10
         
-        let generalBtn = UIButton()
-        let personalBtn = UIButton()
         twoOptionStack.addArrangedSubview(generalBtn)
         twoOptionStack.addArrangedSubview(personalBtn)
         generalBtn.translatesAutoresizingMaskIntoConstraints = false
@@ -174,10 +174,18 @@ class HomePageViewController: UIViewController {
     }
     
     @objc private func generalBtnTapped() {
+        personalBtn.backgroundColor = .defaultgrey
+        generalBtn.backgroundColor = .buttonmaincolor
+        questionArr = [QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
+        collectionViewForQuestions.reloadData()
         print("General")
     }
     
     @objc private func personalBtnTapped() {
+        personalBtn.backgroundColor = .buttonmaincolor
+        generalBtn.backgroundColor = .defaultgrey
+        questionArr =  [QuestionModel(subject: "swift subject", text: "Scrollable?", tags: ["swift", "Ios", "FrontEnd"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
+        collectionViewForQuestions.reloadData()
         print("Personal")
     }
 }
@@ -204,7 +212,9 @@ extension HomePageViewController: UICollectionViewDataSource {
         } else {
             let curTag = questionArr[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as? QuestionCell
-            cell?.genreLable.text = curTag
+            cell?.question.text = curTag.text
+            cell?.tagsArr = curTag.tags
+            cell?.subject.text = curTag.subject
             return cell ?? UICollectionViewCell()
         }
     }

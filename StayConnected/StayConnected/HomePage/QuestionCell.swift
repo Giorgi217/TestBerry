@@ -15,7 +15,7 @@ final class QuestionCell: UICollectionViewCell {
     private var stack = UIStackView()
     private var labelStack = UIStackView()
     private var acceptedImg = UIImageView()
-    private var tagsArr = ["Ios", "Frontend", "swiftUi"]
+    var tagsArr = ["Ios", "Frontend", "swiftUi"]
     
     private var tagsCollection: UICollectionView = {
         let collection: UICollectionView

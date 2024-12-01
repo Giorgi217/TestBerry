@@ -17,8 +17,7 @@ class TabBarViewController: UITabBarController {
     
     private func setupTabBar() {
         
-        let HomePageVC = UIViewController()
-        HomePageVC.view.backgroundColor = .white
+        let HomePageVC = HomePageViewController()
         HomePageVC.tabBarItem = UITabBarItem(
             title: "Home",
             image: UIImage(named: "home"),

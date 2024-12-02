@@ -15,7 +15,7 @@ final class QuestionCell: UICollectionViewCell {
     private var stack = UIStackView()
     private var labelStack = UIStackView()
     private var acceptedImg = UIImageView()
-    var tagsArr = ["Ios", "Frontend", "swiftUi"]
+    var tagsArr = [Tag]()
     
     private var tagsCollection: UICollectionView = {
         let collection: UICollectionView
@@ -122,10 +122,19 @@ extension QuestionCell: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        
+        guard indexPath.row < tagsArr.count else {
+                fatalError("Index out of range: indexPath.row = \(indexPath.row), tagsArr.count = \(tagsArr.count)")
+            }
+        
             let curTag = tagsArr[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TagCell", for: indexPath) as? TagCell
+
+            cell?.genreLable.text = curTag.name
+
             
-            cell?.genreLable.text = curTag
+        cell?.genreLable.text = curTag.name
             
             return cell ?? UICollectionViewCell()
     }

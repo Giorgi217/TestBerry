@@ -9,6 +9,9 @@ import UIKit
 
 class AddQuestion: UIViewController {
     
+    let viewModel = HomePageViewModel()
+    var selectedTags: [String] = []
+    
     let sunbejctView: UIView = {
         let view = UIView()
         return view
@@ -84,6 +87,7 @@ class AddQuestion: UIViewController {
         setupNavigationBar()
         setupUI()
         addButtons()
+        addQuestionButton.addTarget(self, action: #selector(addingQuestion), for: .touchUpInside)
     }
     
     func setupUI() {
@@ -197,6 +201,7 @@ class AddQuestion: UIViewController {
     @objc func buttonTapped(_ sender: UIButton) {
         guard let title = sender.title(for: .normal) else { return }
         addTag(title: title)
+        selectedTags.append(title)
     }
     
     func addTag(title: String) {
@@ -270,7 +275,28 @@ class AddQuestion: UIViewController {
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
+    
+    @objc func addingQuestion() {
+        let subject = subjectTextField.text ?? ""
+        let questionText = questionTextField.text ?? ""
+        let tags = selectedTags
+        viewModel.addquestion(subject: subject, text: questionText, tags: tags)
+        
+        NotificationCenter.default.post(name: .didAddNewQuestion, object: nil, userInfo: [
+                "subject": subject,
+                "questionText": questionText,
+                "tags": tags
+            ])
+
+        dismiss(animated: true, completion: nil)
+        
+        subjectTextField.text = ""
+        questionTextField.text = ""
+        selectedTags.removeAll()
+        tagContainer.subviews.forEach { $0.removeFromSuperview() }
+    }
 }
 
-    
-
+extension Notification.Name {
+    static let didAddNewQuestion = Notification.Name("didAddNewQuestion")
+}

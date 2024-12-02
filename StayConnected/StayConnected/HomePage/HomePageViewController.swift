@@ -10,12 +10,16 @@ import UIKit
 class HomePageViewController: UIViewController {
     private var mainLabelStack = UIStackView()
     private var twoOptionStack = UIStackView()
+    let firstLabel = UILabel()
+    let secondLabel = UILabel()
     private var mainLabel = UILabel()
     private var addIcone = UIImageView()
     let generalBtn = UIButton()
     let personalBtn = UIButton()
     private var tagsArr = ["Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi"]
-    private var questionArr = [QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
+    private var questionArrHolder = [Question]()
+    private var questionArr = [Question]()
+    private let viewModel = HomePageViewModel()
     
     let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -48,14 +52,81 @@ class HomePageViewController: UIViewController {
             return collection
         }()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        mainLabelSetup()
-        twoOptionSetup()
-        searchSetup()
-        setUpcollectionViewForTags()
-        setUpcollectionViewForQuestions()
+        
+        viewModel.getQuestions { questions in
+            if let questions = questions {
+                print("Fetched Questions: \(questions[0].text)")
+                DispatchQueue.main.async { [self] in
+                    for quest in questions {
+                        self.questionArrHolder.append(quest)
+                        print(quest.text)
+                    }
+                    if questionArrHolder.isEmpty {
+                        emptyImageSetup()
+                    } else {
+                        questionArr = questionArrHolder
+                        mainLabelSetup()
+                        twoOptionSetup()
+                        searchSetup()
+                        setUpcollectionViewForTags()
+                        setUpcollectionViewForQuestions()
+                    }
+                    self.collectionViewForQuestions.reloadData()
+                }
+            } else {
+                print("Failed to fetch questions")
+            }
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewQuestion), name: .didAddNewQuestion, object: nil)
+    }
+    
+    @objc func handleNewQuestion(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+          let subject = userInfo["subject"] as? String,
+          let questionText = userInfo["questionText"] as? String,
+          let tags = userInfo["tags"] as? [String] else {
+            return
+        }
+        print("New question added!")
+        self.collectionViewForQuestions.reloadData()
+    }
+
+    private func emptyImageSetup() {
+        view.addSubview(firstLabel)
+        view.addSubview(secondLabel)
+        firstLabel.translatesAutoresizingMaskIntoConstraints = false
+        secondLabel.translatesAutoresizingMaskIntoConstraints = false
+        firstLabel.text = "No questions yet"
+        firstLabel.textColor = .gray
+        secondLabel.text = "Be the first to ask one"
+        secondLabel.textAlignment = .center
+        firstLabel.textAlignment = .center
+        
+        let img = UIImageView()
+        view.addSubview(img)
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.image = UIImage(named: "emptySquad")
+        img.contentMode = .scaleAspectFit
+        
+        NSLayoutConstraint.activate([
+            firstLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            firstLabel.topAnchor.constraint(equalTo: twoOptionStack.bottomAnchor, constant: 91),
+            secondLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            secondLabel.topAnchor.constraint(equalTo: firstLabel.bottomAnchor, constant: 13),
+            secondLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            img.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            img.topAnchor.constraint(equalTo: secondLabel.bottomAnchor, constant: 19),
+            img.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
+        ])
+        
     }
     
     private func mainLabelSetup() {
@@ -170,21 +241,38 @@ class HomePageViewController: UIViewController {
     }
     
     @objc private func addQuestion() {
-        print("add")
+        navigationController?.present(AddQuestion(), animated: true)
     }
     
     @objc private func generalBtnTapped() {
+        if questionArrHolder.isEmpty {
+            firstLabel.text = "No questions yet"
+            secondLabel.text = "Be the first to ask one"
+        }
         personalBtn.backgroundColor = .defaultgrey
         generalBtn.backgroundColor = .buttonmaincolor
-        questionArr = [QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"]), QuestionModel(subject: "swift 3 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
+        questionArr = questionArrHolder
         collectionViewForQuestions.reloadData()
         print("General")
     }
     
     @objc private func personalBtnTapped() {
+        if questionArrHolder.isEmpty {
+            firstLabel.text = "Got a question in mind?"
+            secondLabel.text = "Ask it and wait for like-minded people to answer"
+        }
+        secondLabel.numberOfLines = 0
+        secondLabel.textAlignment = .center
+        secondLabel.lineBreakMode = .byWordWrapping
+        
         personalBtn.backgroundColor = .buttonmaincolor
         generalBtn.backgroundColor = .defaultgrey
-        questionArr =  [QuestionModel(subject: "swift subject", text: "Scrollable?", tags: ["swift", "Ios", "FrontEnd"]), QuestionModel(subject: "swift 2 subject", text: "How to do delegates?", tags: ["swift", "Ios"])]
+        questionArr = []
+        for question in questionArrHolder {
+            if question.user == "Gregory" {
+                questionArr.append(question)
+            }
+        }
         collectionViewForQuestions.reloadData()
         print("Personal")
     }
@@ -213,7 +301,7 @@ extension HomePageViewController: UICollectionViewDataSource {
             let curTag = questionArr[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as? QuestionCell
             cell?.question.text = curTag.text
-            cell?.tagsArr = curTag.tags
+            cell?.tagsArr = curTag.tag_list
             cell?.subject.text = curTag.subject
             return cell ?? UICollectionViewCell()
         }

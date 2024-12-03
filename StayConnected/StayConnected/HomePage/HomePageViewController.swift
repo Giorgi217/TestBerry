@@ -90,9 +90,9 @@ class HomePageViewController: UIViewController {
     
     @objc func handleNewQuestion(notification: Notification) {
         guard let userInfo = notification.userInfo,
-          let subject = userInfo["subject"] as? String,
-          let questionText = userInfo["questionText"] as? String,
-          let tags = userInfo["tags"] as? [String] else {
+          let _ = userInfo["subject"] as? String,
+          let _ = userInfo["questionText"] as? String,
+          let _ = userInfo["tags"] as? [String] else {
             return
         }
         print("New question added!")

@@ -171,7 +171,7 @@ class ProfilePageViewController: UIViewController {
         }
     
     @objc private func stack2Tapped() {
-            print("questions")
+        navigationController?.pushViewController(AnsweredQuestionsViewController(), animated: true)
         }
     
     @objc private func stack3Tapped() {

@@ -61,6 +61,12 @@ class HomePageViewController: UIViewController {
         view.backgroundColor = .white
         
         frechDate()
+        mainLabelSetup()
+        twoOptionSetup()
+        searchSetup()
+        setUpcollectionViewForTags()
+        setUpcollectionViewForQuestions()
+        searchBar.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewQuestion), name: .didAddNewQuestion, object: nil)
     }
@@ -279,6 +285,7 @@ class HomePageViewController: UIViewController {
         collectionViewForQuestions.reloadData()
         print("Personal")
     }
+
 }
 
 
@@ -319,6 +326,35 @@ extension HomePageViewController: UICollectionViewDataSource {
         }
     }
 }
+
+extension HomePageViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            if personalBtn.backgroundColor == .buttonmaincolor {
+                questionArr = questionArrHolder.filter { $0.user == "Gregory" }
+            } else {
+                questionArr = questionArrHolder
+            }
+        } else {
+            questionArr = questionArrHolder.filter { $0.text.lowercased().contains(searchText.lowercased()) }
+        }
+        collectionViewForQuestions.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        
+        if personalBtn.backgroundColor == .buttonmaincolor {
+            questionArr = questionArrHolder.filter { $0.user == "Gregory" }
+        } else {
+            questionArr = questionArrHolder
+        }
+        
+        collectionViewForQuestions.reloadData()
+    }
+}
+
 
 #Preview {
     HomePageViewController()

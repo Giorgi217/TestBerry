@@ -171,6 +171,7 @@ class SignUpView: UIViewController, UITextFieldDelegate {
         confirmPasswordHideButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         logInButton.addTarget(self, action: #selector(logInButtonTapped), for: .touchUpInside)
         emailTextField.delegate = self
+        navigationController?.navigationBar.tintColor = .black
     }
     
     func setupUI() {

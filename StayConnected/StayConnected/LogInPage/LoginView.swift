@@ -130,6 +130,9 @@ class LoginView: UIViewController, UITextFieldDelegate {
         logInButton.addTarget(self, action: #selector(logIntapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUptapped), for: .touchUpInside)
         userNameTextField.delegate = self
+        navigationItem.hidesBackButton = true
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backButton
     }
     
     func setupUI() {

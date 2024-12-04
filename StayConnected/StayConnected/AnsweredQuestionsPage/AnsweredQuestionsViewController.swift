@@ -49,6 +49,7 @@ class AnsweredQuestionsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = .black
         
         viewModel.getQuestions { questions in
             if let questions = questions {
@@ -81,7 +82,7 @@ class AnsweredQuestionsViewController: UIViewController {
         
         mainLabelStack.addArrangedSubview(mainLabel)
         mainLabel.text = "Answered Questions"
-        mainLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        mainLabel.font = UIFont(name: "AnekDevanagari-Medium_SemiBold", size: 20)
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([

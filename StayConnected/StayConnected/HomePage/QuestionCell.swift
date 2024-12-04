@@ -8,6 +8,7 @@
 import UIKit
 
 final class QuestionCell: UICollectionViewCell {
+    var onTap: (() -> Void)?
     let subject = UILabel()
     let question = UILabel()
     let tags = UILabel()
@@ -32,6 +33,7 @@ final class QuestionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpUI()
+        setUpGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -137,6 +139,17 @@ extension QuestionCell: UICollectionViewDataSource {
         cell?.genreLable.text = curTag.name
             
             return cell ?? UICollectionViewCell()
+    }
+    
+    private func setUpGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped))
+        contentView.addGestureRecognizer(tapGesture)
+        contentView.isUserInteractionEnabled = true
+    }
+
+    @objc private func cellTapped() {
+        print("Cell clicked")
+        onTap?()
     }
 }
 

@@ -13,6 +13,10 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         setupTabBar()
         customizeTabBarAppearance()
+        navigationItem.hidesBackButton = true
+        
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backButton
     }
     
     private func setupTabBar() {

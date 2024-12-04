@@ -60,6 +60,12 @@ class HomePageViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        frechDate()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewQuestion), name: .didAddNewQuestion, object: nil)
+    }
+    
+    private func frechDate() {
         viewModel.getQuestions { questions in
             if let questions = questions {
                 print("Fetched Questions: \(questions[0].text)")
@@ -84,8 +90,6 @@ class HomePageViewController: UIViewController {
                 print("Failed to fetch questions")
             }
         }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewQuestion), name: .didAddNewQuestion, object: nil)
     }
     
     @objc func handleNewQuestion(notification: Notification) {
@@ -96,7 +100,6 @@ class HomePageViewController: UIViewController {
             return
         }
         print("New question added!")
-        self.collectionViewForQuestions.reloadData()
     }
 
     private func emptyImageSetup() {
@@ -137,7 +140,7 @@ class HomePageViewController: UIViewController {
         
         mainLabelStack.addArrangedSubview(mainLabel)
         mainLabel.text = "Questions"
-        mainLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        mainLabel.font = UIFont(name: "AnekDevanagari-Medium_SemiBold", size: 20)
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         
         mainLabelStack.addArrangedSubview(addIcone)
@@ -300,6 +303,15 @@ extension HomePageViewController: UICollectionViewDataSource {
         } else {
             let curTag = questionArr[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as? QuestionCell
+            
+            cell?.onTap = { [weak self] in
+                    guard let self = self else { return }
+                    print("Navigating to QuestionDetail screen for cell at \(indexPath.row)")
+                    let QuestionVC = QuestionDetailsPageViewController()
+                    QuestionVC.questionObject = curTag
+                    self.navigationController?.pushViewController(QuestionVC, animated: true)
+            }
+            
             cell?.question.text = curTag.text
             cell?.tagsArr = curTag.tag_list
             cell?.subject.text = curTag.subject

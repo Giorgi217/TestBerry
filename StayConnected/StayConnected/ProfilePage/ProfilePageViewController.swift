@@ -26,8 +26,8 @@ class ProfilePageViewController: UIViewController {
     private func mainLabelSetup() {
         view.addSubview(mainLabel)
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
+        mainLabel.font = UIFont(name: "AnekDevanagari-Medium_SemiBold", size: 20)
         mainLabel.text = "Profile"
-        mainLabel.font = UIFont.boldSystemFont(ofSize: 20)
         
         NSLayoutConstraint.activate([
             mainLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
@@ -176,6 +176,7 @@ class ProfilePageViewController: UIViewController {
     
     @objc private func stack3Tapped() {
             print("log out")
+        navigationController?.pushViewController(LoginView(), animated: true)
         }
 }
 

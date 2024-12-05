@@ -60,7 +60,13 @@ class HomePageViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        frechDate()
+//        frechDate()
+        questionArrHolder = [
+            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "Ios")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+            Question(id: 1, user: "f", user_id: 1, subject: "ad", text: "WHO", tag_list: [Tag(id: 1, name: "Frontend")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "swiftUi")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+        ]
+        questionArr = questionArrHolder
         mainLabelSetup()
         twoOptionSetup()
         searchSetup()
@@ -225,6 +231,7 @@ class HomePageViewController: UIViewController {
         
         collectionViewForTags.register(TagCell.self, forCellWithReuseIdentifier: "TagCell")
         collectionViewForTags.dataSource = self
+        collectionViewForTags.delegate = self
     }
     
     private func setUpcollectionViewForQuestions() {
@@ -285,7 +292,7 @@ class HomePageViewController: UIViewController {
         collectionViewForQuestions.reloadData()
         print("Personal")
     }
-
+    private var currentSelectedTag: String?
 }
 
 
@@ -354,6 +361,52 @@ extension HomePageViewController: UISearchBarDelegate {
         collectionViewForQuestions.reloadData()
     }
 }
+
+extension HomePageViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == collectionViewForTags {
+            let selectedTag = tagsArr[indexPath.row]
+            print("You clicked on tag: \(selectedTag)")
+
+            if currentSelectedTag == selectedTag {
+                // If the same tag is clicked, clear the filter and reset background
+                currentSelectedTag = nil
+                questionArr = questionArrHolder
+                collectionView.deselectItem(at: indexPath, animated: true)
+            } else {
+                // If a new tag is clicked, filter by the selected tag
+                currentSelectedTag = selectedTag
+                questionArr = questionArrHolder.filter { question in
+                    question.tag_list.contains { tag in
+                        tag.name == selectedTag
+                    }
+                }
+            }
+
+            // Reload the questions collection view
+            collectionViewForQuestions.reloadData()
+
+            // Change the background color of the selected cell
+            if let cell = collectionView.cellForItem(at: indexPath) as? TagCell {
+                cell.contentView.backgroundColor = .systemBlue
+                cell.genreLable.textColor = .white
+            }
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if collectionView == collectionViewForTags {
+            // Reset the background color of the deselected cell
+            if let cell = collectionView.cellForItem(at: indexPath) as? TagCell {
+                cell.contentView.backgroundColor = .clear
+                cell.genreLable.textColor = .black
+            }
+        }
+    }
+}
+
+
+
 
 
 #Preview {

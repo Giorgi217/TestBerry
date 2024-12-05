@@ -16,7 +16,7 @@ class HomePageViewController: UIViewController {
     private var addIcone = UIImageView()
     let generalBtn = UIButton()
     let personalBtn = UIButton()
-    private var tagsArr = ["Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi"]
+    private var tagsArr = ["IOS", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi","Ios", "Frontend", "swiftUi"]
     private var questionArrHolder = [Question]()
     private var questionArr = [Question]()
     private let viewModel = HomePageViewModel()
@@ -60,13 +60,14 @@ class HomePageViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-//        frechDate()
-        questionArrHolder = [
-            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "Ios")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
-            Question(id: 1, user: "f", user_id: 1, subject: "ad", text: "WHO", tag_list: [Tag(id: 1, name: "Frontend")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
-            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "swiftUi")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
-        ]
-        questionArr = questionArrHolder
+        frechDate()
+        frechTags()
+//        questionArrHolder = [
+//            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "Ios")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+//            Question(id: 1, user: "f", user_id: 1, subject: "ad", text: "WHO", tag_list: [Tag(id: 1, name: "Frontend")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+//            Question(id: 1, user: "adfs", user_id: 1, subject: "ad", text: "where", tag_list: [Tag(id: 1, name: "swiftUi")], created_at: "", updated_at: "", views_count: 1, votes: 1, answers: [], slug: ""),
+//        ]
+//        questionArr = questionArrHolder
         mainLabelSetup()
         twoOptionSetup()
         searchSetup()
@@ -97,6 +98,26 @@ class HomePageViewController: UIViewController {
                         setUpcollectionViewForQuestions()
                     }
                     self.collectionViewForQuestions.reloadData()
+                }
+            } else {
+                print("Failed to fetch questions")
+            }
+        }
+    }
+    
+    private func frechTags() {
+        tagsArr = []
+        viewModel.getTags { tags in
+            if let tags = tags {
+                print("getting tags date")
+                DispatchQueue.main.async { [self] in
+                    for tag in tags {
+                        self.tagsArr.append(tag.name)
+                        print(tag.name)
+                    }
+                    print("TAGS___________________")
+                    print(tagsArr)
+                    collectionViewForTags.reloadData()
                 }
             } else {
                 print("Failed to fetch questions")

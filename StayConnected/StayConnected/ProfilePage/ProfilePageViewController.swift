@@ -15,6 +15,12 @@ class ProfilePageViewController: UIViewController {
     private var cameraIcone = UIImageView()
     private var stack = UIStackView()
     
+    private var scrollView: UIScrollView = {
+        let sv = UIScrollView()
+        return sv
+    }()
+    private var contetView = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -24,25 +30,43 @@ class ProfilePageViewController: UIViewController {
     }
     
     private func mainLabelSetup() {
-        view.addSubview(mainLabel)
+        view.addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.addSubview(contetView)
+        contetView.translatesAutoresizingMaskIntoConstraints = false
+        
+        contetView.addSubview(mainLabel)
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.font = UIFont(name: "AnekDevanagari-Medium_SemiBold", size: 20)
         mainLabel.text = "Profile"
         
         NSLayoutConstraint.activate([
-            mainLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
-            mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contetView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contetView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contetView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contetView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contetView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contetView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: 1.05),
+            
+            mainLabel.topAnchor.constraint(equalTo: contetView.topAnchor, constant: 0),
+            mainLabel.leadingAnchor.constraint(equalTo: contetView.leadingAnchor, constant: 16)
         ])
     }
     
     private func profileSetup() {
-        view.addSubview(profileImage)
+        contetView.addSubview(profileImage)
         profileImage.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(userName)
+        contetView.addSubview(userName)
         userName.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(mail)
+        contetView.addSubview(mail)
         mail.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(cameraIcone)
+        contetView.addSubview(cameraIcone)
         cameraIcone.translatesAutoresizingMaskIntoConstraints = false
         
         userName.text = "Shawn Howard"
@@ -53,13 +77,13 @@ class ProfilePageViewController: UIViewController {
         profileImage.image = UIImage(named: "profile")
         cameraIcone.image = UIImage(named: "camera")
         NSLayoutConstraint.activate([
-            profileImage.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
-            profileImage.widthAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
-            profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            profileImage.heightAnchor.constraint(equalTo: contetView.heightAnchor, multiplier: 0.2),
+            profileImage.widthAnchor.constraint(equalTo: contetView.heightAnchor, multiplier: 0.2),
+            profileImage.centerXAnchor.constraint(equalTo: contetView.centerXAnchor),
             profileImage.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 24),
-            userName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            userName.centerXAnchor.constraint(equalTo: contetView.centerXAnchor),
             userName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 33),
-            mail.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            mail.centerXAnchor.constraint(equalTo: contetView.centerXAnchor),
             mail.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 4),
             cameraIcone.centerXAnchor.constraint(equalTo: profileImage.centerXAnchor, constant: 49),
             cameraIcone.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor)
@@ -67,7 +91,7 @@ class ProfilePageViewController: UIViewController {
     }
     
     private func stackSetup() {
-        view.addSubview(stack)
+        contetView.addSubview(stack)
         stack.translatesAutoresizingMaskIntoConstraints = false
         let infoLabel = UILabel()
         stack.addSubview(infoLabel)
@@ -102,9 +126,9 @@ class ProfilePageViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: mail.bottomAnchor, constant: 59),
-            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            stack.bottomAnchor.constraint(equalTo: contetView.bottomAnchor, constant: 0),
+            stack.leadingAnchor.constraint(equalTo: contetView.leadingAnchor, constant: 18),
+            stack.trailingAnchor.constraint(equalTo: contetView.trailingAnchor, constant: -18),
             lineOne.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 29),
             lineTwo.topAnchor.constraint(equalTo: lineOne.bottomAnchor, constant: 29),
             lineFour.topAnchor.constraint(equalTo: lineTwo.bottomAnchor, constant: 29),

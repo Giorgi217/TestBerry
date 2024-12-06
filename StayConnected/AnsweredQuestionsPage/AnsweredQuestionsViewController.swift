@@ -45,18 +45,31 @@ class AnsweredQuestionsViewController: UIViewController {
             collection.backgroundColor = .clear
             return collection
         }()
-
+    private var myUser = Profile(userName: "", email: "", profilePicture: "", score: 0, createdAt: "")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .black
+        
+        let profileModel = ProfilePageViewModel()
+        profileModel.fetchProfile() { [weak self] profile, error in
+            if let error = error {
+                print("failed: \(error)")
+                return
+            }
+            self?.myUser.userName = profile?.userName ?? "error"
+            self?.myUser.email = profile?.email ?? "error"
+            self?.myUser.createdAt = profile?.createdAt ?? "error"
+            self?.myUser.score = profile?.score ?? 0
+        }
         
         viewModel.getQuestions { questions in
             if let questions = questions {
                 print("Fetched Questions: \(questions[0].text)")
                 DispatchQueue.main.async { [self] in
                     for quest in questions {
-                        if quest.user == "Gregory"{
+                        if quest.user == myUser.userName{
                             self.questionArrHolder.append(quest)
                             print(quest.text)
                         }

@@ -22,6 +22,7 @@ class HomePageViewController: UIViewController, QuestionUpdateDelegate {
     private var questionArrHolder = [Question]()
     private var questionArr = [Question]()
     private let viewModel = HomePageViewModel()
+    private var myUser = Profile(userName: "", email: "", profilePicture: "", score: 0, createdAt: "")
     
     let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -61,6 +62,18 @@ class HomePageViewController: UIViewController, QuestionUpdateDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        let profileModel = ProfilePageViewModel()
+        profileModel.fetchProfile() { [weak self] profile, error in
+            if let error = error {
+                print("failed: \(error)")
+                return
+            }
+            self?.myUser.userName = profile?.userName ?? "error"
+            self?.myUser.email = profile?.email ?? "error"
+            self?.myUser.createdAt = profile?.createdAt ?? "error"
+            self?.myUser.score = profile?.score ?? 0
+        }
         
         frechDate()
         frechTags()
@@ -308,7 +321,7 @@ class HomePageViewController: UIViewController, QuestionUpdateDelegate {
         generalBtn.backgroundColor = .defaultgrey
         questionArr = []
         for question in questionArrHolder {
-            if question.user == "Gregory" {
+            if question.user == myUser.userName {
                 questionArr.append(question)
             }
         }
@@ -361,7 +374,7 @@ extension HomePageViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             if personalBtn.backgroundColor == .buttonmaincolor {
-                questionArr = questionArrHolder.filter { $0.user == "Gregory" }
+                questionArr = questionArrHolder.filter { $0.user == myUser.userName }
             } else {
                 questionArr = questionArrHolder
             }
@@ -376,7 +389,7 @@ extension HomePageViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         
         if personalBtn.backgroundColor == .buttonmaincolor {
-            questionArr = questionArrHolder.filter { $0.user == "Gregory" }
+            questionArr = questionArrHolder.filter { $0.user == myUser.userName }
         } else {
             questionArr = questionArrHolder
         }

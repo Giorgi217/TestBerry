@@ -99,4 +99,38 @@ class HomePageViewModel {
         
         task.resume()
     }
+    
+    func getTags(completion: @escaping ([Tag]?) -> Void) {
+        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/tags/top-tags")!
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        guard let token = KeychainService.retrieve(for: "authToken") else {
+            completion(nil)
+            return
+        }
+        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error:", error ?? "Unknown error")
+                completion(nil)
+                return
+            }
+            
+            do {
+                // Decode the JSON into an array of Question models
+                let tags = try JSONDecoder().decode([Tag].self, from: data)
+                completion(tags)
+            } catch {
+                print("Decoding error: \(error)")
+                completion(nil)
+            }
+        }
+        
+        task.resume()
+    }
 }

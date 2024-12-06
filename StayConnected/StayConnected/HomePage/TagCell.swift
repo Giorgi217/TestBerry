@@ -12,6 +12,7 @@ final class TagCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.isUserInteractionEnabled = true
         setUpUI()
     }
     

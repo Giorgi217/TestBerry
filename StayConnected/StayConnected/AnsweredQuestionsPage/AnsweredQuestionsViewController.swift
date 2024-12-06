@@ -72,6 +72,7 @@ class AnsweredQuestionsViewController: UIViewController {
                 print("Failed to fetch questions")
             }
         }
+        searchBar.delegate = self
     }
     
     private func mainLabelSetup() {
@@ -169,6 +170,17 @@ extension AnsweredQuestionsViewController: UICollectionViewDataSource {
             cell?.subject.text = curTag.subject
             return cell ?? UICollectionViewCell()
         }
+    }
+}
+
+extension AnsweredQuestionsViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            questionArr = questionArrHolder
+        } else {
+            questionArr = questionArrHolder.filter { $0.text.lowercased().contains(searchText.lowercased()) }
+        }
+        collectionViewForQuestions.reloadData()
     }
 }
 

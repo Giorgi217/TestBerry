@@ -163,6 +163,7 @@ extension QuestionDetailsPageViewController: UICollectionViewDataSource {
         cell?.nameLable.text = questionObject.answers[indexPath.row].user
         cell?.dateLabel.text = questionObject.answers[indexPath.row].created_at
         cell?.textLabel.text = questionObject.answers[indexPath.row].text
+        cell?.isAccepted = questionObject.answers[indexPath.row].is_accepted
         return cell ?? UICollectionViewCell()
     }
 }

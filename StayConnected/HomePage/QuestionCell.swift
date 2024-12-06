@@ -82,9 +82,10 @@ final class QuestionCell: UICollectionViewCell {
         question.font = UIFont.systemFont(ofSize: 15)
         question.textColor = .black
         
-        acceptedImg.image = UIImage.yes
-        stack.addArrangedSubview(acceptedImg)
-        acceptedImg.translatesAutoresizingMaskIntoConstraints = false
+        // MARK: accept image hereeee
+//        acceptedImg.image = UIImage.yes
+//        stack.addArrangedSubview(acceptedImg)
+//        acceptedImg.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setUpReplayLable() {

@@ -7,6 +7,11 @@
 import UIKit
 
 final class DetailsCell: UICollectionViewCell {
+    var answearObject = Answer(id: -1, text: "lorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem lorem ", user: "unknown", created_at: "2024 17 12", is_accepted: false)
+    var nameLable = UILabel()
+    var dateLabel = UILabel()
+    var textLabel = UILabel()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpUI()
@@ -26,32 +31,32 @@ final class DetailsCell: UICollectionViewCell {
         profileImage.contentMode = .scaleAspectFit
         profileImage.layer.cornerRadius = 17
         
-        let nameLable = UILabel()
+        
         nameLable.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(nameLable)
         
         nameLable.textColor = .black
         nameLable.font = .systemFont(ofSize: 15, weight: .bold)
         nameLable.textAlignment = .left
-        nameLable.text = "someone fdas"
+        nameLable.text = answearObject.user
         
-        let dateLabel = UILabel()
+        
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(dateLabel)
         
         dateLabel.textColor = .black
         dateLabel.font = .systemFont(ofSize: 11)
         dateLabel.textAlignment = .left
-        dateLabel.text = "2024 18 03"
+        dateLabel.text = answearObject.created_at
         
-        let textLabel = UILabel()
+        
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(textLabel)
         
         textLabel.textColor = .gray
         textLabel.font = .systemFont(ofSize: 15)
         textLabel.textAlignment = .left
-        textLabel.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris dfd"
+        textLabel.text = answearObject.text
         textLabel.numberOfLines = 0
         textLabel.lineBreakMode = .byWordWrapping
         

@@ -16,6 +16,9 @@ struct Tag: Codable {
 struct Answer: Codable {
     let id: Int
     let text: String
+    let user: String
+    let created_at: String
+    let is_accepted: Bool
 }
 
 struct Question: Codable {
@@ -131,6 +134,34 @@ class HomePageViewModel {
             }
         }
         
+        task.resume()
+    }
+    
+    func addAnswear(text: String, questionid: Int) {
+        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/answers/")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        guard let token = KeychainService.retrieve(for: "authToken") else { return }
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let parameters: [String: Any] = [
+            "question": questionid,
+            "text": text,
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error:", error ?? "Unknown error")
+                return
+            }
+            if let responseDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print(responseDict)
+            }
+            print("done")
+        }
         task.resume()
     }
 }

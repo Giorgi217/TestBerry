@@ -45,18 +45,31 @@ class AnsweredQuestionsViewController: UIViewController {
             collection.backgroundColor = .clear
             return collection
         }()
-
+    private var myUser = Profile(userName: "", email: "", profilePicture: "", score: 0, createdAt: "")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .black
+        
+        let profileModel = ProfilePageViewModel()
+        profileModel.fetchProfile() { [weak self] profile, error in
+            if let error = error {
+                print("failed: \(error)")
+                return
+            }
+            self?.myUser.userName = profile?.userName ?? "error"
+            self?.myUser.email = profile?.email ?? "error"
+            self?.myUser.createdAt = profile?.createdAt ?? "error"
+            self?.myUser.score = profile?.score ?? 0
+        }
         
         viewModel.getQuestions { questions in
             if let questions = questions {
                 print("Fetched Questions: \(questions[0].text)")
                 DispatchQueue.main.async { [self] in
                     for quest in questions {
-                        if quest.user == "Gregory"{
+                        if quest.user == myUser.userName{
                             self.questionArrHolder.append(quest)
                             print(quest.text)
                         }
@@ -144,7 +157,7 @@ class AnsweredQuestionsViewController: UIViewController {
     
 }
 
-extension AnsweredQuestionsViewController: UICollectionViewDataSource {
+extension AnsweredQuestionsViewController: UICollectionViewDataSource  {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == collectionViewForTags {
             tagsArr.count
@@ -165,6 +178,15 @@ extension AnsweredQuestionsViewController: UICollectionViewDataSource {
         } else {
             let curTag = questionArr[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as? QuestionCell
+            
+            cell?.onTap = { [weak self] in
+                    guard let self = self else { return }
+                    print("Navigating to QuestionDetail screen for cell at \(indexPath.row)")
+                    let QuestionVC = QuestionDetailsPageViewController()
+                    QuestionVC.questionObject = curTag
+                    self.navigationController?.pushViewController(QuestionVC, animated: true)
+            }
+            
             cell?.question.text = curTag.text
             cell?.tagsArr = curTag.tag_list
             cell?.subject.text = curTag.subject
@@ -172,7 +194,6 @@ extension AnsweredQuestionsViewController: UICollectionViewDataSource {
         }
     }
 }
-
 extension AnsweredQuestionsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
@@ -184,6 +205,4 @@ extension AnsweredQuestionsViewController: UISearchBarDelegate {
     }
 }
 
-#Preview {
-    AnsweredQuestionsViewController()
-}
+

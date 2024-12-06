@@ -8,16 +8,41 @@
 import UIKit
 
 class QuestionDetailsPageViewController: UIViewController {
+    var viewModel = HomePageViewModel()
     private var subjectLabel = UILabel()
     private var questionLabel = UILabel()
     private var dateLabel = UILabel()
-    var questionObject = Question(id: -1, user: "", user_id: -1, subject: "", text: "", tag_list: [], created_at: "", updated_at: "", views_count: -1, votes: -1, answers: [], slug: "")
+    var questionObject = Question(id: -1, user: "geogre", user_id: -1, subject: "easy easy bro", text: "is it really so easy?", tag_list: [], created_at: "", updated_at: "", views_count: -1, votes: -1, answers: [], slug: "")
+    
+    let questionView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 8
+        view.layer.borderWidth = 1
+        return view
+    }()
+    
+    let questionTextField: UITextField = {
+        let textField = UITextField()
+        textField.textAlignment = .left
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Type your reply here",
+            attributes: [.foregroundColor: UIColor.defaultgrey]
+        )
+        
+        return textField
+    }()
+    
+    let addQuestionButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.lightarrow, for: .normal)
+        return button
+    }()
     
     let collectionViewForAnswears: UICollectionView = {
             let collection: UICollectionView
             let collectionLayout = UICollectionViewFlowLayout()
             collectionLayout.scrollDirection = .vertical
-            collectionLayout.itemSize = CGSize(width:  UIScreen.main.bounds.width - 30, height: 112)
+        collectionLayout.itemSize = CGSize(width:  UIScreen.main.bounds.width - 30, height: 150)
             collection = UICollectionView(frame: CGRect(x: 0, y: 0, width: 250, height: 250), collectionViewLayout: collectionLayout)
             collection.translatesAutoresizingMaskIntoConstraints = false
             collection.backgroundColor = .clear
@@ -29,6 +54,7 @@ class QuestionDetailsPageViewController: UIViewController {
         view.backgroundColor = .white
         labelSetup()
         setUpcollectionViewForAnswers()
+        textFieldSetup()
     }
     
     private func labelSetup() {
@@ -73,7 +99,7 @@ class QuestionDetailsPageViewController: UIViewController {
             collectionStack.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 34),
             collectionStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             collectionStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            collectionStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+            collectionStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300)
         ])
         collectionStack.backgroundColor = .tabGray
         collectionStack.layer.cornerRadius = 12
@@ -87,18 +113,57 @@ class QuestionDetailsPageViewController: UIViewController {
         collectionViewForAnswears.register(DetailsCell.self, forCellWithReuseIdentifier: "DetailsCell")
         collectionViewForAnswears.dataSource = self
     }
+    
+    private func textFieldSetup() {
+        view.addSubview(questionView)
+        view.addSubview(questionTextField)
+        view.addSubview(addQuestionButton)
+        questionTextField.translatesAutoresizingMaskIntoConstraints = false
+        addQuestionButton.translatesAutoresizingMaskIntoConstraints = false
+        questionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            questionView.topAnchor.constraint(equalTo: collectionViewForAnswears.bottomAnchor, constant: 40),
+            questionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10),
+            questionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
+            questionView.heightAnchor.constraint(equalToConstant: 43),
+            
+            addQuestionButton.topAnchor.constraint(equalTo: questionView.topAnchor, constant: 12),
+            addQuestionButton.rightAnchor.constraint(equalTo: questionView.rightAnchor, constant: -12),
+            addQuestionButton.heightAnchor.constraint(equalToConstant: 18),
+            addQuestionButton.widthAnchor.constraint(equalToConstant: 21),
+            
+            questionTextField.topAnchor.constraint(equalTo: questionView.topAnchor, constant: 8),
+            questionTextField.bottomAnchor.constraint(equalTo: questionView.bottomAnchor, constant: -8),
+            questionTextField.leftAnchor.constraint(equalTo: questionView.leftAnchor, constant: 16),
+            questionTextField.rightAnchor.constraint(equalTo: addQuestionButton.rightAnchor, constant: -30),
+        ])
+        
+        addQuestionButton.addTarget(self, action: #selector(addQuestionButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func addQuestionButtonTapped() {
+        let answearText = questionTextField.text ?? "idk what to do"
+        print(answearText)
+        viewModel.addAnswear(text: answearText, questionid: questionObject.id)
+        questionTextField.text = ""
+    }
 }
 
 extension QuestionDetailsPageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        questionObject.answers.count
-        2
+        questionObject.answers.count
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DetailsCell", for: indexPath) as? DetailsCell
-//        cell?.questionObject = questionObject
+        cell?.answearObject = self.questionObject.answers[indexPath.row]
+        
+        cell?.nameLable.text = questionObject.answers[indexPath.row].user
+        cell?.dateLabel.text = questionObject.answers[indexPath.row].created_at
+        cell?.textLabel.text = questionObject.answers[indexPath.row].text
+        cell?.isAccepted = questionObject.answers[indexPath.row].is_accepted
         return cell ?? UICollectionViewCell()
     }
 }

@@ -11,13 +11,13 @@ class QuestionDetailsPageViewController: UIViewController {
     private var subjectLabel = UILabel()
     private var questionLabel = UILabel()
     private var dateLabel = UILabel()
-    var questionObject = Question(id: -1, user: "", user_id: -1, subject: "", text: "", tag_list: [], created_at: "", updated_at: "", views_count: -1, votes: -1, answers: [], slug: "")
+    var questionObject = Question(id: -1, user: "geogre", user_id: -1, subject: "easy easy bro", text: "is it really so easy?", tag_list: [], created_at: "", updated_at: "", views_count: -1, votes: -1, answers: [], slug: "")
     
     let collectionViewForAnswears: UICollectionView = {
             let collection: UICollectionView
             let collectionLayout = UICollectionViewFlowLayout()
             collectionLayout.scrollDirection = .vertical
-            collectionLayout.itemSize = CGSize(width:  UIScreen.main.bounds.width - 30, height: 112)
+        collectionLayout.itemSize = CGSize(width:  UIScreen.main.bounds.width - 30, height: 150)
             collection = UICollectionView(frame: CGRect(x: 0, y: 0, width: 250, height: 250), collectionViewLayout: collectionLayout)
             collection.translatesAutoresizingMaskIntoConstraints = false
             collection.backgroundColor = .clear
@@ -73,7 +73,7 @@ class QuestionDetailsPageViewController: UIViewController {
             collectionStack.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 34),
             collectionStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             collectionStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            collectionStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+            collectionStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300)
         ])
         collectionStack.backgroundColor = .tabGray
         collectionStack.layer.cornerRadius = 12
@@ -91,14 +91,12 @@ class QuestionDetailsPageViewController: UIViewController {
 
 extension QuestionDetailsPageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        questionObject.answers.count
-        2
+        8
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DetailsCell", for: indexPath) as? DetailsCell
-//        cell?.questionObject = questionObject
         return cell ?? UICollectionViewCell()
     }
 }

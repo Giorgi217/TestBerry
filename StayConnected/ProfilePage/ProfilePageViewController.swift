@@ -14,6 +14,11 @@ class ProfilePageViewController: UIViewController {
     private var profileImage = UIImageView()
     private var cameraIcone = UIImageView()
     private var stack = UIStackView()
+    private var score: Int = -1
+    private let pointLabel = UILabel()
+    private let smallStack = UIStackView()
+    
+    let viewModel = ProfilePageViewModel()
     
     private var scrollView: UIScrollView = {
         let sv = UIScrollView()
@@ -24,9 +29,30 @@ class ProfilePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        viewModel.fetchProfile() { [weak self] profile, error in
+            if let error = error {
+                print("failed: \(error)")
+                return
+            }
+            self?.updateUI(with: profile)
+        }
         mainLabelSetup()
         profileSetup()
         stackSetup()
+        
+    }
+    
+    
+    private func updateUI(with profile: Profile?) {
+        DispatchQueue.main.async{
+            self.userName.text = profile?.userName
+            self.mail.text = profile?.email
+            self.pointLabel.text = String(profile?.score ?? -2) 
+        }
+
+        
+        
     }
     
     private func mainLabelSetup() {
@@ -100,7 +126,32 @@ class ProfilePageViewController: UIViewController {
         infoLabel.font = UIFont.boldSystemFont(ofSize: 15)
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        let lineOne = createLine(text: "Score",point: "25")
+        stack.addSubview(smallStack)
+        smallStack.translatesAutoresizingMaskIntoConstraints = false
+        smallStack.axis = .horizontal
+        smallStack.distribution = .equalCentering
+        
+        addBottomBorderToStack(stack: smallStack, padding: 12)
+        
+        let leadLabel = UILabel()
+        smallStack.addArrangedSubview(leadLabel)
+        leadLabel.text = "Score"
+        leadLabel.textColor = .gray
+        leadLabel.font = UIFont.systemFont(ofSize: 17)
+        leadLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        smallStack.addArrangedSubview(pointLabel)
+        pointLabel.text = "\(score)"
+        pointLabel.textColor = .gray
+        pointLabel.font = UIFont.systemFont(ofSize: 17)
+        pointLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            smallStack.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
+            smallStack.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
+            smallStack.heightAnchor.constraint(equalToConstant: 56)
+        ])
+        
         let lineTwo = createLine(text: "Answered Questions",point: "15")
         
         let lineThree = UIStackView()
@@ -129,13 +180,13 @@ class ProfilePageViewController: UIViewController {
             stack.bottomAnchor.constraint(equalTo: contetView.bottomAnchor, constant: 0),
             stack.leadingAnchor.constraint(equalTo: contetView.leadingAnchor, constant: 18),
             stack.trailingAnchor.constraint(equalTo: contetView.trailingAnchor, constant: -18),
-            lineOne.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 29),
-            lineTwo.topAnchor.constraint(equalTo: lineOne.bottomAnchor, constant: 29),
+            smallStack.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 29),
+            lineTwo.topAnchor.constraint(equalTo: smallStack.bottomAnchor, constant: 29),
             lineFour.topAnchor.constraint(equalTo: lineTwo.bottomAnchor, constant: 29),
             lineFour.widthAnchor.constraint(equalTo: stack.widthAnchor),
         ])
         
-        addTapGesture(to: lineOne, action: #selector(stack1Tapped))
+        addTapGesture(to: smallStack, action: #selector(stack1Tapped))
         addTapGesture(to: lineTwo, action: #selector(stack2Tapped))
         addTapGesture(to: lineFour, action: #selector(stack3Tapped))
     }
@@ -204,6 +255,3 @@ class ProfilePageViewController: UIViewController {
         }
 }
 
-#Preview {
-    ProfilePageViewController()
-}

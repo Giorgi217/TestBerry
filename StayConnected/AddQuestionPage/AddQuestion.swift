@@ -12,6 +12,9 @@ class AddQuestion: UIViewController {
     let viewModel = HomePageViewModel()
     var selectedTags: [String] = []
     
+    weak var delegate: QuestionUpdateDelegate?
+    let blaamdfcsdlk = HomePageViewController()
+    
     let sunbejctView: UIView = {
         let view = UIView()
         return view
@@ -177,9 +180,10 @@ class AddQuestion: UIViewController {
         for title in buttonTitles {
             let button = UIButton(type: .system)
             button.setTitle(title, for: .normal)
-            button.backgroundColor = .systemBlue
-            button.setTitleColor(.white, for: .normal)
-            button.layer.cornerRadius = 5
+            button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+            button.backgroundColor = .buttonbackground
+            button.setTitleColor(.buttonmaincolor, for: .normal)
+            button.layer.cornerRadius = 10
             button.sizeToFit()
 
             let buttonWidth = button.frame.width + 20 // Add padding
@@ -200,6 +204,19 @@ class AddQuestion: UIViewController {
     
     @objc func buttonTapped(_ sender: UIButton) {
         guard let title = sender.title(for: .normal) else { return }
+
+        if selectedTags.count >= 4 {
+            let alert = UIAlertController(title: "Limit Reached", message: "You can only select up to 4 tags.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        if selectedTags.contains(title) {
+            
+            return
+        }
+        
         addTag(title: title)
         selectedTags.append(title)
     }
@@ -207,9 +224,11 @@ class AddQuestion: UIViewController {
     func addTag(title: String) {
         let tagButton = UIButton(type: .system)
         tagButton.setTitle(title, for: .normal)
-        tagButton.backgroundColor = .systemBlue
-        tagButton.setTitleColor(.white, for: .normal)
-        tagButton.layer.cornerRadius = 5
+        tagButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        tagButton.backgroundColor = .buttonbackground
+        tagButton.setTitleColor(.buttonmaincolor, for: .normal)
+        tagButton.layer.cornerRadius = 10
+        
         tagButton.sizeToFit()
 
         let tagWidth = tagButton.frame.width + 20 // Padding
@@ -230,15 +249,12 @@ class AddQuestion: UIViewController {
         }
 
         tagButton.frame = CGRect(x: xOffset, y: yOffset, width: tagWidth, height: tagHeight)
-        tagButton.addTarget(self, action: #selector(removeTag(_:)), for: .touchUpInside)
+       
 
         tagContainer.addSubview(tagButton)
     }
     
-    @objc func removeTag(_ sender: UIButton) {
-        sender.removeFromSuperview()
-        reorganizeTags()
-    }
+
     
     func reorganizeTags() {
         var xOffset: CGFloat = 0
@@ -281,6 +297,9 @@ class AddQuestion: UIViewController {
         let questionText = questionTextField.text ?? ""
         let tags = selectedTags
         viewModel.addquestion(subject: subject, text: questionText, tags: tags)
+        blaamdfcsdlk.didAddNewQuestion()
+        
+                dismiss(animated: true, completion: nil)
         
         NotificationCenter.default.post(name: .didAddNewQuestion, object: nil, userInfo: [
                 "subject": subject,
@@ -288,7 +307,8 @@ class AddQuestion: UIViewController {
                 "tags": tags
             ])
 
-        dismiss(animated: true, completion: nil)
+  
+        navigationController?.popViewController(animated: true)
         
         subjectTextField.text = ""
         questionTextField.text = ""

@@ -7,7 +7,9 @@
 
 import UIKit
 
-class HomePageViewController: UIViewController {
+class HomePageViewController: UIViewController, QuestionUpdateDelegate {
+
+    
     private var mainLabelStack = UIStackView()
     private var twoOptionStack = UIStackView()
     let firstLabel = UILabel()
@@ -381,7 +383,17 @@ extension HomePageViewController: UISearchBarDelegate {
         
         collectionViewForQuestions.reloadData()
     }
+    
+    func didAddNewQuestion() {
+        frechDate()
+        collectionViewForQuestions.reloadData()
+        
+    }
+    
 }
+
+
+
 
 extension HomePageViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -427,9 +439,8 @@ extension HomePageViewController: UICollectionViewDelegate {
 }
 
 
-
-
-
-#Preview {
-    HomePageViewController()
+protocol QuestionUpdateDelegate: AnyObject {
+    func didAddNewQuestion()
 }
+
+

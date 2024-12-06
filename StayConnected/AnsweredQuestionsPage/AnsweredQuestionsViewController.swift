@@ -184,6 +184,4 @@ extension AnsweredQuestionsViewController: UISearchBarDelegate {
     }
 }
 
-#Preview {
-    AnsweredQuestionsViewController()
-}
+

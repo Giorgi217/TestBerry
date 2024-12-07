@@ -7,13 +7,14 @@
 import UIKit
 
 final class DetailsCell: UICollectionViewCell {
+    let viewModel = DetailsPageViewModel()
+    
     var answearObject = Answer(id: -1, text: "lorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem loremlorem lorem lorem ", user: "unknown", created_at: "2024 17 12", is_accepted: false)
     var nameLable = UILabel()
     var dateLabel = UILabel()
     var textLabel = UILabel()
     let profileImage = UIImageView()
     var isAccepted = false
-//    var btn = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,10 +40,13 @@ final class DetailsCell: UICollectionViewCell {
             acceptLabel.text = "Reject"
             acceptContainer.backgroundColor = .red
             isAccepted = false
+            viewModel.postAcceptStatus(id: answearObject.id, text: answearObject.text, isAccepted: isAccepted)
+            
         } else {
             acceptLabel.text = "Accept"
             acceptContainer.backgroundColor = .buttonmaincolor
             isAccepted = true
+            viewModel.postAcceptStatus(id: answearObject.id, text: answearObject.text, isAccepted: isAccepted)
         }
         
         NSLayoutConstraint.activate([
@@ -132,17 +136,7 @@ final class DetailsCell: UICollectionViewCell {
             textLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             textLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-//            btn.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 70),
-//            btn.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-//            btn.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            
         ])
-        
-//        btn.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-    }
-    
-    @objc func buttonTapped() {
-        
     }
     
 }

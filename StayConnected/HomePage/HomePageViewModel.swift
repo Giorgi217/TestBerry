@@ -19,6 +19,7 @@ struct Answer: Codable {
     let user: String
     let created_at: String
     let is_accepted: Bool
+//    let question: String
 }
 
 struct Question: Codable {
@@ -40,7 +41,7 @@ struct Question: Codable {
 class HomePageViewModel {
     
     func addquestion(subject: String, text: String, tags: [String]) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/questions/")!
+        let url = URL(string: "https://164.90.165.135/api/questions/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         guard let token = KeychainService.retrieve(for: "authToken") else { return }
@@ -54,8 +55,9 @@ class HomePageViewModel {
         ]
         
         request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print("Error:", error ?? "Unknown error")
                 return
@@ -70,7 +72,7 @@ class HomePageViewModel {
     
     
     func getQuestions(completion: @escaping ([Question]?) -> Void) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/questions/")!
+        let url = URL(string: "https://164.90.165.135/api/questions/")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -82,8 +84,9 @@ class HomePageViewModel {
         
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print("Error:", error ?? "Unknown error")
                 completion(nil)
@@ -91,7 +94,6 @@ class HomePageViewModel {
             }
             
             do {
-                // Decode the JSON into an array of Question models
                 let questions = try JSONDecoder().decode([Question].self, from: data)
                 completion(questions)
             } catch {
@@ -104,7 +106,7 @@ class HomePageViewModel {
     }
     
     func getTags(completion: @escaping ([Tag]?) -> Void) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/tags/top-tags")!
+        let url = URL(string: "https://164.90.165.135/api/tags/top-tags")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -116,8 +118,9 @@ class HomePageViewModel {
         
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print("Error:", error ?? "Unknown error")
                 completion(nil)
@@ -125,7 +128,6 @@ class HomePageViewModel {
             }
             
             do {
-                // Decode the JSON into an array of Question models
                 let tags = try JSONDecoder().decode([Tag].self, from: data)
                 completion(tags)
             } catch {

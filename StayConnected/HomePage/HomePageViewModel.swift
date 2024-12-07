@@ -138,7 +138,7 @@ class HomePageViewModel {
     }
     
     func addAnswear(text: String, questionid: Int) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/answers/")!
+        let url = URL(string: "https://164.90.165.135/api/answers/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         guard let token = KeychainService.retrieve(for: "authToken") else { return }
@@ -151,8 +151,9 @@ class HomePageViewModel {
         ]
         
         request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print("Error:", error ?? "Unknown error")
                 return

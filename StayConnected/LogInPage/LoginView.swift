@@ -277,3 +277,6 @@ class LoginView: UIViewController, UITextFieldDelegate {
     }
 }
 
+#Preview{
+    LoginView()
+}

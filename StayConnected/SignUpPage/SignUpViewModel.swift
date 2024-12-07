@@ -12,7 +12,7 @@ import UIKit
 class SignUpViewModel {
     
     func register(username: String, email: String, password: String, confirmPassword: String, completion: @escaping (Bool, String?) -> Void) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/register/")!
+        let url = URL(string: "https://164.90.165.135/api/register/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -25,7 +25,9 @@ class SignUpViewModel {
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
+        
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 completion(false, "An error occurred: \(error?.localizedDescription ?? "Unknown error")")
                 return

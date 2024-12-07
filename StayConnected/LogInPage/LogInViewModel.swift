@@ -11,7 +11,7 @@ import Security
 class LogInViewModel {
     
     func logIn(email: String, password: String, completion: @escaping (Bool, String) -> Void) {
-        let url = URL(string: "https://h5ck35.pythonanywhere.com/api/token/")!
+        let url = URL(string: "https://164.90.165.135/api/token/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -22,7 +22,9 @@ class LogInViewModel {
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
+        
+        let task = session.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print("Error:", error ?? "Unknown error")
                 completion(false, "An error occurred: \(error?.localizedDescription ?? "Unknown error")")
@@ -32,7 +34,7 @@ class LogInViewModel {
             if let responseDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 if let token = responseDict["access"] as? String {
                     if KeychainService.delete(for: "authToken") {
-                        print("keychain data deleted")
+                        print("Keychain data deleted")
                     }
                     
                     if KeychainService.save(token, for: "authToken") {
@@ -41,13 +43,25 @@ class LogInViewModel {
                     } else {
                         completion(false, "Failed to save token")
                     }
-                    
                 } else {
                     completion(false, "Incorrect email or password")
                 }
             }
         }
         task.resume()
+    }
+
+}
+
+
+class CustomSessionDelegate: NSObject, URLSessionDelegate {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
+                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if let serverTrust = challenge.protectionSpace.serverTrust {
+            completionHandler(.useCredential, URLCredential(trust: serverTrust))
+        } else {
+            completionHandler(.cancelAuthenticationChallenge, nil)
+        }
     }
 }
 

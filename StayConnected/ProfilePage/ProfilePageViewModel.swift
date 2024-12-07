@@ -11,7 +11,7 @@ class ProfilePageViewModel {
     
     func fetchProfile(completion: @escaping (Profile?, Error?) -> Void) {
 
-            let url = URL(string: "https://h5ck35.pythonanywhere.com/api/profiles/my-profile/")!
+            let url = URL(string: "https://164.90.165.135/api/profiles/my-profile/")!
             
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
@@ -24,7 +24,9 @@ class ProfilePageViewModel {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            let session = URLSession(configuration: .default, delegate: CustomSessionDelegate(), delegateQueue: nil)
+        
+            let task = session.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
                     completion(nil, error)
                     print("Error:", error ?? "Unknown error")
@@ -48,4 +50,5 @@ class ProfilePageViewModel {
             task.resume()
         }
     }
+
 
